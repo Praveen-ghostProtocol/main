@@ -123,7 +123,6 @@ while True:
         checkAndBounceIfFoodHitsTheBorder(food[i])
         if checkIfPlayerHitsFood(player,food[i]):
             print()
-            #step by shanker
             #Step 1 : increment the score
             score += 10
             
