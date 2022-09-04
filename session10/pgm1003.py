@@ -39,7 +39,7 @@ else:
         
         print(f"|{id:2}|{empno:4}|{job:10}|{mgr:4}|{hiredate:19}|{sal:4}|{comm:4}|{deptno:2}|")
         
-        
+bot.commit()
         
         
         
