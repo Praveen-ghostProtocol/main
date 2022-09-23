@@ -42,6 +42,65 @@ def add_student():
         mydb.close()
     else:
         print('could not connect to DB')         
+        
+def search_student():    
+
+    mydb = None
+    print("before connecting : ",mydb)
+    mydb = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = 'Tiger@123',
+        database = 'g71s12'
+    )
+
+    if mydb:
+        print('connected to the db successfully!!')
+        mycursor = mydb.cursor()
+        student_name = entry_student_name.get()
+        sql = "select * from student where student_name like %s;"
+        mycursor.execute(sql,[student_name])
+        
+        list_of_headings = ['SID','STUDENT NAME','STUDENT EMAIL','PHY','MATHS','CHEM','TOTAL']
+        
+        output_msg = ""  
+        output_msg += '-'*92+'\n'
+        output_msg += f"| {list_of_headings[0]:^6}"
+        output_msg += f"| {list_of_headings[1]:^20}"
+        output_msg += f"| {list_of_headings[2]:^20}"
+        output_msg += f"| {list_of_headings[3]:^6}"
+        output_msg += f"| {list_of_headings[4]:^6}"
+        output_msg += f"| {list_of_headings[5]:^6}"
+        output_msg += f"| {list_of_headings[6]:^6}"
+        output_msg += '\n'
+        output_msg += '-'*92+'\n'
+        for data in mycursor:
+            s_id =data[0]
+            student_name = data[1]
+            student_email = data[2]
+            student_phy = data[3]
+            student_maths = data[4]
+            student_chemistry = data[5]   
+            total = student_phy + student_maths + student_chemistry         
+            
+            output_msg += f"| {s_id:^6} "
+            output_msg += f"| {student_name:^20} "
+            output_msg += f"| {student_email:^20} "
+            output_msg += f"| {student_phy:^6} " 
+            output_msg += f"| {student_maths:^6} "   
+            output_msg += f"| {student_chemistry:^6} "   
+            output_msg += f"| {total:^6}"
+            output_msg += '\n'
+            print()
+            
+        output_msg += '\n'+'-'*92
+        label_status.configure(text = output_msg,bg='orange',fg='black')                
+                           
+            
+        mydb.commit() 
+        mydb.close()
+    else:
+        print('could not connect to DB')        
 
 def display_student():    
 
@@ -59,6 +118,8 @@ def display_student():
         mycursor = mydb.cursor()
         sql = "select * from student"
         mycursor.execute(sql)
+        
+        list_of_students = mycursor.fetchall()
         
         list_of_headings = ['SID','STUDENT NAME','STUDENT EMAIL','PHY','MATHS','CHEM','TOTAL']
         
@@ -245,6 +306,13 @@ button_display_student = bot.Button(
     command=display_student
 )
 
+button_search_student = bot.Button(
+    master=frame_operation,
+    text='Search Student',
+    font=('Arial', 24, 'normal'),
+    command=search_student
+)
+
 label_heading.pack()
 label_subheading.grid(row=0, columnspan=2)
 label_student_name.grid(row=1, column=0,sticky=bot.E)
@@ -260,8 +328,10 @@ entry_student_chemistry.grid(row=5,column=1)
 button_add_student.grid(row=6,columnspan=2)
 
 button_display_student.pack()
+button_search_student.pack()
 label_status.pack()
 #label_display.pack()
+
 
 bot.mainloop()
 
